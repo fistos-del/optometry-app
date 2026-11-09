@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  passwordHash String
+  name         String
+  role         String
+}
+
+model Patient {
+  id              String      @id @default(cuid())
+  fileNumber      String      @unique
+  firstName       String
+  lastName        String
+  phone           String
+  dateOfBirth     DateTime
+  medicalAid      String?
+  hasDiabetes     Boolean     @default(false)
+  hasHypertension Boolean     @default(false)
+  eyeInjuries     String?
+  eyeSurgeries    String?
+  records         EyeRecord[]
+  jobs            Job[]
+  createdAt       DateTime    @default(now())
+}
+
+model EyeRecord {
+  id           String   @id @default(cuid())
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  examDate     DateTime @default(now())
+  odSphere     Float?
+  odCylinder   Float?
+  odAxis       Int?
+  odAdd        Float?
+  osSphere     Float?
+  osCylinder   Float?
+  osAxis       Int?
+  osAdd        Float?
+  vaDistance   String?
+  vaNear       String?
+  iopRight     Float?
+  iopLeft      Float?
+  colourVision String?
+  fundusNotes  String?
+  pd           Float?
+  segHeight    Float?
+}
+
+model Job {
+  id            String   @id @default(cuid())
+  patientId     String
+  patient       Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  orderDate     DateTime @default(now())
+  frameName     String
+  lensType      String
+  labSentDate   DateTime?
+  labReturnDate DateTime?
+  status        String   @default("ORDERED")
+  balanceDue    Float    @default(0)
+}
