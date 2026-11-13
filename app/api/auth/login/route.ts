@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
     setSessionCookie(token);
     return NextResponse.json({ user: { id: user.id, name: user.name, role: user.role } });
   } catch (error) {
+    console.error("LOGIN_ERROR_STACK:", error); // This will appear in Vercel Runtime Logs
     return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
 }
